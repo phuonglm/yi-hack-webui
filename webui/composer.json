@@ -1,0 +1,19 @@
+{
+    "name": "phuonglm/yiant-record-viewer",
+    "type": "application",
+    "description": "Yi ant camera visualizer",
+    "keywords": ["ip camera", "camera"],
+    "homepage": "http://phuonglm.net",
+    "license": "LGPL-3.0",
+    "authors": [
+        {
+            "name": "Ly Minh Phuong",
+            "email": "phuonglm@phuonglm.net"
+        }
+    ],
+    "require": {
+        "php": ">=5.2",
+        "smarty/smarty": "~3.1"
+
+    }
+}

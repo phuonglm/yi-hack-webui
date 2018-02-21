@@ -1,0 +1,4 @@
+data/*
+templates_c
+vendor
+**/node_modules
