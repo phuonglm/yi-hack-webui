@@ -14,13 +14,12 @@ while [[ true ]]; do
         echo "ntpd -q -n -p ${NTP_SERVER}"
         sleep 10
          ) | telnet > /dev/null 2>&1
-        #DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
         if [ ! -d "$LCD/$HOST" ]; then
           mkdir "$LCD/$HOST"
         fi
-
-        DATE=`date +%YY%mM%dD`
+        DELETE_RECORD_DIRs=`lftp -c "open '$HOST'; ls /tmp/hd1/record" | awk '{printf "%s", $9" "}' | awk '{$NF="";sub(/[ \t]+$/,"")}1'`
+        DELETE_RECORD_SUB_DIRs=`lftp -c "open '$HOST'; ls /tmp/hd1/record_sub" | awk '{printf "%s", $9" "}' | awk '{$NF="";sub(/[ \t]+$/,"")}1'`
         lftp -c "open '$HOST';
         lcd $LCD/$HOST;
         cd /tmp/hd1/record;
@@ -30,28 +29,26 @@ while [[ true ]]; do
                --verbose;
         " > /dev/null 2>&1
 
-        DELETE_DIRs=`lftp -c "open '$HOST'; ls /tmp/hd1/record_sub" | grep -v "$DATE.*" | awk '{printf "%s", $9" "}'`
-        if [[ $DELETE_DIRs = *[!\ ]* ]]; then
+        if [[ $DELETE_RECORD_SUB_DIRs = *[!\ ]* ]]; then
             ( echo open ${HOST}
             sleep 1
             echo ${TELNET_USER}
             sleep 1
             echo ${TELNET_PASSWORD}
             sleep 1
-            echo "cd /tmp/hd1/record_sub && rm -rf $DELETE_DIRs"
+            echo "cd /tmp/hd1/record_sub && rm -rf $DELETE_RECORD_SUB_DIRs"
             sleep 2
              ) | telnet > /dev/null 2>&1
         fi
 
-        DELETE_DIRs=`lftp -c "open '$HOST'; ls /tmp/hd1/record" | grep -v "$DATE.*" | awk '{printf "%s", $9" "}'`
-        if [[ $DELETE_DIRs = *[!\ ]* ]]; then
+        if [[ $DELETE_RECORD_DIRs = *[!\ ]* ]]; then
             ( echo open ${HOST}
             sleep 1
             echo ${TELNET_USER}
             sleep 1
             echo ${TELNET_PASSWORD}
             sleep 1
-            echo "cd /tmp/hd1/record && rm -rf $DELETE_DIRs"
+            echo "cd /tmp/hd1/record && rm -rf $DELETE_RECORD_DIRs"
             sleep 2
              ) | telnet > /dev/null 2>&1
         fi
