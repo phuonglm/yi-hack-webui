@@ -1,10 +1,10 @@
 #!/bin/bash
 IFS=' ' read -r -a HOSTS <<< "$CAMERAS"
 LCD="/data"
-echo "Cronjob started"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Cronjob started"
 while [[ true ]]; do
     for HOST in ${HOSTS[@]}; do
-        echo "Syncing $HOST"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Syncing $HOST"
         ( echo open ${HOST}
         sleep 1
         echo ${TELNET_USER}
@@ -27,7 +27,8 @@ while [[ true ]]; do
                --Remove-source-files \
                --exclude-glob *.tmp \
                --verbose;
-        " > /dev/null 2>&1
+        "
+        #> /dev/null 2>&1
 
         if [[ $DELETE_RECORD_SUB_DIRs = *[!\ ]* ]]; then
             ( echo open ${HOST}
@@ -52,7 +53,7 @@ while [[ true ]]; do
             sleep 2
              ) | telnet > /dev/null 2>&1
         fi
-        echo "done"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] done"
     done
     sleep $DOWNLOAD_INVERVAL
 done

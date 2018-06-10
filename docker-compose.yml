@@ -19,5 +19,6 @@ services:
     volumes:
       - ./data:/data
     restart: always
+    mem_limit: 100M
     env_file:
       .env

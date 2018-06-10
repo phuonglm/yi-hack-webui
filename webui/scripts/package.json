@@ -4,7 +4,14 @@
   "description": "Script for visualize yi ant 720p mp4 storage",
   "main": "main.js",
   "dependencies": {
-    "videojs-playlist": "^4.2.0"
+    "videojs-playlist": "^4.2.0",
+    "bootstrap": "3.3.5",
+    "video.js": "6.2.0",
+    "moment": "2.22.2",
+    "bootstrap-autohidingnavbar": "^4.0.0",
+    "bootstrap-datepicker": "1.8.0",
+    "font-awesome": "^4.7.0"
+
   },
   "devDependencies": {},
   "scripts": {
