@@ -99,21 +99,22 @@ function drawChart() {
     chart.draw(data, options);
 
     function selectHandler(e) {
-        var clickedData = window.data.og[chart.getSelection()[0]['row']]['c'];
-        var clickedStart = moment(clickedData[1]['v']);
-        var clickedEnd = moment(clickedData[2]['v']);
-        var base = clickedData[0]['v'];
+        var click_row_id = chart.getSelection()[0]['row'];
+        var startDate = moment(window.data.getValue(click_row_id, 1)).startOf('day');
+        var clickedStart = moment(window.data.getValue(click_row_id, 1));
+        var endDate = moment(window.data.getValue(click_row_id, 2)).endOf('day');
+        var base = window.data.getValue(click_row_id, 0);
 
         var url = '/index.php?a=getPlaylist&type=json&base=' + base +
-            '&start=' + moment(clickedData[1]['v']).startOf('day') +
-            '&end=' + moment(clickedData[2]['v']).endOf('day');
+            '&start=' + startDate +
+            '&end=' + endDate;
         $.getJSON( url, function( data ) {
             if ($("#video_container video").length > 0){
                 var myPlayer = videojs('cameraVideo');
                 myPlayer.dispose();
             }
 
-            var title = clickedStart.format("D/M HH:mm") + " ~> " + clickedEnd.format("D/M HH:mm");
+            var title = startDate.format("D/M HH:mm") + " ~> " + endDate.format("D/M HH:mm");
             $('#pushModalLable').html(title);
             var video = $('<video />', {
                 'data-setup': '{"fluid": true}',
@@ -136,8 +137,8 @@ function drawChart() {
                 }
             });
 
-            $("#cameraVideo").data("start", clickedStart._i);
-            $("#cameraVideo").data("end", clickedEnd._i);
+            $("#cameraVideo").data("start", startDate._i);
+            $("#cameraVideo").data("end", endDate._i);
             $("#cameraVideo").data("base", base);
 
             myPlayer.on('keydown', function(e){
