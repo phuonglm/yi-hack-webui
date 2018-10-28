@@ -22,11 +22,17 @@ $(document).ready(function(){
 
     $(".previous-btn").click(function(){
       var myPlayer = videojs('cameraVideo');
-      myPlayer.playlist.previous();
+      var item = myPlayer.playlist.previous()
+      if(item){
+        $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).format("D/M HH:mm"));
+      }
     });
     $(".next-btn").click(function(){
       var myPlayer = videojs('cameraVideo');
-      myPlayer.playlist.next();
+      var item = myPlayer.playlist.next()
+      if(item){
+        $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).format("D/M HH:mm"));
+      }
     });
 
     $("#delete-btn").click(function(){
@@ -114,8 +120,8 @@ function drawChart() {
                 myPlayer.dispose();
             }
 
-            var title = startDate.format("D/M HH:mm") + " ~> " + endDate.format("D/M HH:mm");
-            $('#pushModalLable').html(title);
+            var title = clickedStart.format("D/M HH:mm");
+            $('#pushModalLabel').html(title);
             var video = $('<video />', {
                 'data-setup': '{"fluid": true}',
                 class: 'col-xs-10 video-js vjs-default-skin vjs-big-play-centered',
@@ -144,9 +150,15 @@ function drawChart() {
             myPlayer.on('keydown', function(e){
                 var keycode = e.keyCode;
                 if (keycode == 39) {
-                    myPlayer.playlist.next();
+                    var item = myPlayer.playlist.next();
+                    if(item){
+                        $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).format("D/M HH:mm"));
+                    }
                 } else if (keycode == 37) {
-                    myPlayer.playlist.previous();
+                    var item = myPlayer.playlist.previous();
+                    if(item){
+                        $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).format("D/M HH:mm"));
+                    }
                 } else if (keycode == 46) {
                     $("#delete-btn").trigger('click');
                 }
