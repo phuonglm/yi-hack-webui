@@ -12,7 +12,9 @@ while [[ true ]]; do
             echo ${TELNET_USER}
             sleep 1
             echo ${TELNET_PASSWORD}
-            sleep 1
+            sleep 4
+            echo "mount | grep -q 'vfat (ro'; if [ $\? -eq 0 ]; then reboot; fi;"
+            sleep 4
             echo "ntpd -q -n -p ${NTP_SERVER}"
             sleep 10
              ) | telnet > /dev/null 2>&1
@@ -28,6 +30,7 @@ while [[ true ]]; do
             mirror  \
                    --Remove-source-files \
                    --exclude-glob *.tmp \
+                   --exclude-glob last_motion_check \
                    --verbose;
             "
             #> /dev/null 2>&1

@@ -5,7 +5,9 @@
   "main": "main.js",
   "dependencies": {
     "videojs-playlist": "^4.2.0",
-    "bootstrap": "3.3.5",
+    "jquery": "^3.3.1",
+    "bootstrap": "^4.1.2",
+    "popper.js": "^1.14.3",
     "video.js": "6.2.0",
     "moment": "2.22.2",
     "bootstrap-autohidingnavbar": "^4.0.0",
