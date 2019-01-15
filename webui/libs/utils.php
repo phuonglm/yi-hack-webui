@@ -1,6 +1,6 @@
 <?php
-const DATA_DIR = "data/";
-date_default_timezone_set(getenv('TIME_ZONE') ?? 'UTC');
+$GLOBALS['DATA_DIR'] = getenv("DATA_PATH") ? getenv("DATA_PATH") : "data/";
+date_default_timezone_set(getenv("TIME_ZONE") ? getenv("TIME_ZONE") : "UTC");
 class Segment {
     public $start;
     public $end;
@@ -48,11 +48,11 @@ class TimeLine {
 
 class Utils{
     public static function getRecordList($basePath, $start, $end){
-        if (is_dir(DATA_DIR.$basePath)) {
+        if (is_dir($GLOBALS['DATA_DIR'].$basePath)) {
             $dirList = [];
-            if ($dh = opendir(DATA_DIR.$basePath)) {
+            if ($dh = opendir($GLOBALS['DATA_DIR'].$basePath)) {
                 while (($file = readdir($dh)) !== false) {
-                    if(filetype(DATA_DIR.$basePath . '/' . $file) == 'dir' && 
+                    if(filetype($GLOBALS['DATA_DIR'].$basePath . '/' . $file) == 'dir' && 
                         DateTime::createFromFormat('Y\Ym\Md\DH\H',$file) >= DateTime::createFromFormat('Y\Ym\Md\DH\H',$start->format('Y\Ym\Md\DH\H')) &&
                         DateTime::createFromFormat('Y\Ym\Md\DH\H',$file) <= DateTime::createFromFormat('Y\Ym\Md\DH\H',$end->format('Y\Ym\Md\DH\H'))){
                         array_push($dirList, $file);
@@ -63,12 +63,12 @@ class Utils{
             sort($dirList);
             $recordList = [];
             foreach ($dirList as $recordDir) {
-                if ($dh = opendir(DATA_DIR.$basePath."/".$recordDir)) {
+                if ($dh = opendir($GLOBALS['DATA_DIR'].$basePath."/".$recordDir)) {
                     while (($file = readdir($dh)) !== false) {
                         $recordPath = $recordDir.'/'.$file;
                         $recordDate = Utils::createDate($recordPath);
 
-                        if(filetype(DATA_DIR.$basePath. '/' .$recordDir.'/'.$file) == 'file' &&
+                        if(filetype($GLOBALS['DATA_DIR'].$basePath. '/' .$recordDir.'/'.$file) == 'file' &&
                             $recordDate >= $start &&
                             $recordDate <= $end){
                             array_push($recordList, $recordPath);
@@ -91,7 +91,7 @@ class Utils{
     }
 
     public static function createFullPath($basePath, $date){
-        return DATA_DIR."$basePath".$date->format('Y\Ym\Md\DH\H/i\Ms\S\.\m\p\4');
+        return $GLOBALS['DATA_DIR']."$basePath".$date->format('Y\Ym\Md\DH\H/i\Ms\S\.\m\p\4');
     }
 
     public static function findStart($basePath, $path){
@@ -117,7 +117,7 @@ class Utils{
     }
 
     public static function getSegment($basePath, $path){
-        if(file_exists(DATA_DIR.$basePath.$path)){
+        if(file_exists($GLOBALS['DATA_DIR'].$basePath.$path)){
             $result = new Segment(Utils::findStart($basePath, $path), Utils::findEnd($basePath, $path));
         } else {
             $result = null;
@@ -147,7 +147,6 @@ function getData(){
                     array('type'=> 'datetime', 'id'=> 'End')
                 );
     $data->rows = array();
-
     $hostsname = explode(" ", getenv('CAMERAS'));
     foreach ($hostsname as $hostname) {
         $timeLine = new TimeLine($hostname.'/');
@@ -180,12 +179,12 @@ function getPlaylist(){
         header("content-type: audio/x-mpegurl");
         echo "#EXTM3U \r\n";
         foreach ($playlist as $media) {
-            echo $protocol."://".$_SERVER['HTTP_HOST'] . '/' . DATA_DIR.$base . '/' . $media . "\r\n";
+            echo $protocol."://".$_SERVER['HTTP_HOST'] . '/data/' . $base . '/' . $media . "\r\n";
         }
     } elseif ($_GET['type'] == 'json') {
         $result = array();
         foreach ($playlist as $media) {
-            $fullUrl = $protocol."://".$_SERVER['HTTP_HOST'] . '/' . DATA_DIR.$base . '/' . $media;
+            $fullUrl = $protocol."://".$_SERVER['HTTP_HOST'] . '/data/'. $base . '/' . $media;
             array_push($result, $fullUrl);
         }
         echo json_encode($result);
@@ -205,7 +204,7 @@ function deletePlaylist(){
     $protocol = strtolower(array_shift($protocol));
 
     foreach ($playlist as $media) {
-        unlink (DATA_DIR.$base."/".$media);
+        unlink ($GLOBALS['DATA_DIR'].$base."/".$media);
     }
     echo '{"status":"ok"}';
 }

@@ -2,22 +2,13 @@ version: '2'
 services:
   webui:
     build:
-      context: webui/
+      context: .
       dockerfile: Dockerfile
+    volumes:
+      - /mnt/storage/camera/data:/var/www/app/data
+      - ./cronjob/yiantcopy.sh:/opt/yidownload/yiantcopy.sh
     ports:
       - "5000:80"
-    restart: always
-    cpuset: "0"
-    volumes:
-      - ./data:/app/data
-    env_file:
-      .env
-  cronjob:
-    build:
-      context: cronjob/
-      dockerfile: Dockerfile
-    volumes:
-      - ./data:/data
     restart: always
     mem_limit: 100M
     env_file:
