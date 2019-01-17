@@ -133,10 +133,10 @@ function getData(){
         $startDate->modify("-".$_GET['r']." days");
     } elseif (isset($_GET['d'])){
         $startDate = new DateTime();
-        $startDate->setTimestamp(intval($_GET['d'])/1000);
+        $startDate->setTimestamp(intval($_GET['d']/1000));
 
         $endDate = new DateTime();
-        $endDate->setTimestamp(intval($_GET['d'])/1000);
+        $endDate->setTimestamp(intval($_GET['d']/1000));
         $endDate->modify("+1 days");
     }
 
@@ -166,10 +166,10 @@ function getData(){
 function getPlaylist(){
     $base = $_GET['base'];
     $start = new DateTime();
-    $start->setTimestamp( intval($_GET['start'])/1000);
+    $start->setTimestamp( intval($_GET['start']/1000));
 
     $end = new DateTime();
-    $end->setTimestamp(intval($_GET['end'])/1000);
+    $end->setTimestamp(intval($_GET['end']/1000));
     $playlist = Utils::getRecordList($base, $start, $end);
 
     $protocol = explode("/",$_SERVER['SERVER_PROTOCOL']);
@@ -194,10 +194,10 @@ function getPlaylist(){
 function deletePlaylist(){
     $base = $_GET['base'];
     $start = new DateTime();
-    $start->setTimestamp( intval($_GET['start'])/1000);
+    $start->setTimestamp( intval($_GET['start']/1000));
 
     $end = new DateTime();
-    $end->setTimestamp(intval($_GET['end'])/1000);
+    $end->setTimestamp(intval($_GET['end']/1000));
     $playlist = Utils::getRecordList($base, $start, $end);
 
     $protocol = explode("/",$_SERVER['SERVER_PROTOCOL']);
