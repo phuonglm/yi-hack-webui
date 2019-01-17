@@ -7,21 +7,25 @@
         <link rel="stylesheet" href="scripts/node_modules/bootstrap/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="scripts/node_modules/font-awesome/css/font-awesome.min.css">
         <link rel="stylesheet" href="scripts/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css">
-        <link href="scripts/node_modules/video.js/dist/video-js.css" rel="stylesheet">
+        <link rel="stylesheet" href="scripts/node_modules/bootstrap4-fs-modal/dist/css/bootstrap-fs-modal.min.css" >
+        <link rel="stylesheet" href="scripts/node_modules/video.js/dist/video-js.css">
 
-        <script src="scripts/node_modules/jquery/dist/jquery.min.js"></script>
-        <script src="scripts/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-        <script src="scripts/node_modules/bootstrap-autohidingnavbar/dist/jquery.bootstrap-autohidingnavbar.min.js"></script>
-        <!-- If you'd like to support IE8 -->
-        <script src="scripts/node_modules/videojs-ie8/dist/videojs-ie8.min.js"></script>
+        <script type="text/javascript" src="scripts/node_modules/jquery/dist/jquery.min.js"></script>
+        <script type="text/javascript" src="scripts/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="scripts/node_modules/bootstrap-autohidingnavbar/dist/jquery.bootstrap-autohidingnavbar.min.js"></script>
+        <script type="text/javascript" src="scripts/node_modules/jquery-touchswipe/jquery.touchSwipe.min.js"></script>
+
         <!--Load the AJAX API-->
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
         <script type="text/javascript" src="scripts/node_modules/moment/min/moment.min.js"></script>
-        <script src="scripts/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+        <script type="text/javascript" src="scripts/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
 
-        <script src="scripts/node_modules/video.js/dist/video.js"></script>
-        <script src="scripts/node_modules/videojs-playlist/dist/videojs-playlist.min.js"></script>
+        <!-- If you'd like to support IE8 -->
+        <script type="text/javascript" src="scripts/node_modules/videojs-ie8/dist/videojs-ie8.min.js"></script>
+
+        <script type="text/javascript" src="scripts/node_modules/video.js/dist/video.js"></script>
+        <script type="text/javascript" src="scripts/node_modules/videojs-playlist/dist/videojs-playlist.min.js"></script>
 
     </head>
     
@@ -65,7 +69,7 @@
             </div>
         </div>
         <!--Div that will hold the pie chart-->
-        <div id="chart_div"></div>
+        <div id="chart_div" style="padding: 0.7em"></div>
         {include file="player.tpl"}
         <script src="scripts/main.js"></script>
   </body>

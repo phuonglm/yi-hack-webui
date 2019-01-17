@@ -71,9 +71,6 @@ $(document).ready(function(){
         }
     });
 
-    $(".reload-btn").click(function(){
-        window.location.href = "/";
-    });
 });
 
 function getDateFromMedia(url){
@@ -147,7 +144,11 @@ function drawChart() {
             $("#cameraVideo").data("end", endDate._i);
             $("#cameraVideo").data("base", base);
 
-            myPlayer.on('keydown', function(e){
+
+
+
+
+            $('#myModal').bind('keydown', function(e){
                 var keycode = e.keyCode;
                 if (keycode == 39) {
                     var item = myPlayer.playlist.next();
@@ -164,6 +165,27 @@ function drawChart() {
                 }
             });
 
+            $('#video_container').swipe({
+                swipe:function(event, direction, distance, duration, fingerCount, fingerData) {
+                    if (direction === 'left') {
+                        var item = myPlayer.playlist.next();
+                        if(item){
+                            $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).format("D/M HH:mm"));
+                        }
+                    } else if (direction === 'right') {
+                        var item = myPlayer.playlist.previous();
+                        if(item){
+                            $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).format("D/M HH:mm"));
+                        }
+                    }
+                },
+                doubleTab: function(event, target){
+                    myPlayer.requestFullscreen();
+                    return true;
+                }
+            });
+
+            $('#video_container').bind('dblclick', function() { myPlayer.requestFullscreen(); });
             myPlayer.playlist(playlist, 0);
             myPlayer.playlist.autoadvance(0);
 

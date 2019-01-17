@@ -4,12 +4,17 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: phuonglm/yi-hack-webui
     volumes:
       - /mnt/storage/camera/data:/var/www/app/data
-      - ./cronjob/yiantcopy.sh:/opt/yidownload/yiantcopy.sh
+      # - ./cronjob/yiantcopy.sh:/opt/yidownload/yiantcopy.sh
+      # - ./webui/templates:/var/www/app/templates
+      # - ./webui/scripts:/var/www/app/scripts
+      # - ./webui/libs:/var/www/app/libs
     ports:
       - "5000:80"
     restart: always
-    mem_limit: 100M
+    mem_limit: 50M
     env_file:
       .env
+    restart: always
