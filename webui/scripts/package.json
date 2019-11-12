@@ -4,7 +4,7 @@
   "description": "Script for visualize yi ant 720p mp4 storage",
   "main": "main.js",
   "dependencies": {
-    "bootstrap": "^4.1.2",
+    "bootstrap": "^4.3.1",
     "bootstrap-autohidingnavbar": "^4.0.0",
     "bootstrap-datepicker": "1.8.0",
     "bootstrap4-fs-modal": "^0.1.5",
