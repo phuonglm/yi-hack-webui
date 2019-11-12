@@ -33,10 +33,27 @@ RUN apk --update add wget \
     mkdir -p /var/log/supervisor   && \
     rm /etc/nginx/nginx.conf
 
+WORKDIR /var/www/app
+ADD ./webui/composer.json ./webui/composer.lock ./
+RUN composer install
+ADD ./webui/scripts/package.json ./webui/scripts/yarn.lock ./scripts/
+RUN npm install -g yarn && cd /var/www/app/scripts/ && yarn install
+ADD ./webui/scripts/main.js ./webui/scripts/player.js  ./scripts/
+ADD ./webui/index.php ./
+ADD ./webui/libs ./libs
+ADD ./webui/templates ./templates
+
+
+RUN mkdir -p /opt/yidownload/
+WORKDIR /opt/yidownload/
+ADD ./cronjob/yiantcopy.sh ./
+ADD ./config/start.sh ./
+RUN chmod 755 /opt/yidownload/*.sh
+
+RUN mkdir -p /var/www/app/data
+
 ADD ./config/nginx/nginx.conf /etc/nginx/nginx.conf
 ADD ./config/supervisord/supervisord.conf /etc/supervisord.conf
-
-ADD ./config/start.sh /start.sh
 
 # tweak php-fpm config
 RUN sed -i -e "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g" /etc/php5/php.ini                                           && \
@@ -60,28 +77,12 @@ RUN sed -i -e "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g" /etc/php5/php.ini    
     rm -Rf /etc/nginx/conf.d/*                && \
     rm -Rf /etc/nginx/sites-available/default && \
     mkdir -p /etc/nginx/ssl/                  && \
-    chmod 755 /start.sh                       && \
     find /etc/php5/conf.d/ -name "*.ini" -exec sed -i -re 's/^(\s*)#(.*)/\1;\2/g' {} \;
-
 ADD ./config/nginx/site-default.conf /etc/nginx/sites-enabled/default.conf
+
 RUN mkdir -p /var/www/app/tmp/ && chmod 777 /var/www/app/tmp/
-WORKDIR /var/www/app
-ADD ./webui/composer.json ./webui/composer.lock ./
-RUN composer install
-ADD ./webui/scripts ./scripts
-RUN cd /var/www/app/scripts/ && npm install
-ADD ./webui/index.php ./
-ADD ./webui/libs ./libs
-ADD ./webui/templates ./templates
 
 
-RUN mkdir -p /opt/yidownload/
-WORKDIR /opt/yidownload/
-ADD ./cronjob/yiantcopy.sh ./
-ADD ./config/start.sh ./
-RUN chmod 755 /opt/yidownload/*.sh
-
-RUN mkdir -p /var/www/app/data
 VOLUME /var/www/app/data
 
 # Expose Ports

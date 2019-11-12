@@ -1,5 +1,5 @@
 <html>
-    
+
     <head>
         <title>{$doc_title}</title>
         <meta charset="utf-8">
@@ -21,14 +21,11 @@
         <script type="text/javascript" src="scripts/node_modules/moment/min/moment.min.js"></script>
         <script type="text/javascript" src="scripts/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
 
-        <!-- If you'd like to support IE8 -->
-        <script type="text/javascript" src="scripts/node_modules/videojs-ie8/dist/videojs-ie8.min.js"></script>
-
         <script type="text/javascript" src="scripts/node_modules/video.js/dist/video.js"></script>
         <script type="text/javascript" src="scripts/node_modules/videojs-playlist/dist/videojs-playlist.min.js"></script>
 
     </head>
-    
+
     <body>
         <nav class="navbar navbar-light bg-light navbar-expand-md">
             <div class="container">
@@ -40,7 +37,7 @@
                 id="navbar">
                     <ul class="nav navbar-nav ml-auto">
                         <li class="dropdown nav-item"> <a href="#" class="dropdown-toggle fa fa-video-camera fa-2x nav-link"
-                            data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> {$device_info['device_name']}<span class="caret"></span></a>
+                            data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></a>
                             <ul
                             class="dropdown-menu">{section name=id loop=$devices}
                                 <li class="dropdown-item"><a href="#">{$devices[id]}</a>
@@ -49,7 +46,7 @@
                     <li class="dropdown nav-item"> <a href="#" id="date-dropdown" class="dropdown-toggle fa fa-calendar fa-2x nav-link"
                         data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> {$time_range} <span class="caret"></span></a>
                         <ul
-                        class="dropdown-menu">
+                        class="dropdown-menu dropdown-menu-right">
                             <li class="dropdown-item">
                                 <div id="date-selector"></div>
                             </li>

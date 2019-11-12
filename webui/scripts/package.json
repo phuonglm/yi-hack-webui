@@ -13,8 +13,8 @@
     "jquery-touchswipe": "^1.6.19",
     "moment": "2.22.2",
     "popper.js": "^1.14.3",
-    "video.js": "6.2.0",
-    "videojs-playlist": "^4.2.0"
+    "video.js": "7.4.1",
+    "videojs-playlist": "^4.3.0"
   },
   "devDependencies": {},
   "scripts": {

@@ -1,6 +1,9 @@
 <?php
 $GLOBALS['DATA_DIR'] = getenv("DATA_PATH") ? getenv("DATA_PATH") : "data/";
 date_default_timezone_set(getenv("TIME_ZONE") ? getenv("TIME_ZONE") : "UTC");
+$GLOBALS['HOTLINK_SECRET'] = getenv("HOTLINK_SECRET") ? getenv("HOTLINK_SECRET") : "hellosecret";
+$GLOBALS['HOTLINK_TTL'] = getenv("HOTLINK_TTL") ? getenv("HOTLINK_TTL") : 3600;
+
 class Segment {
     public $start;
     public $end;
@@ -52,7 +55,7 @@ class Utils{
             $dirList = [];
             if ($dh = opendir($GLOBALS['DATA_DIR'].$basePath)) {
                 while (($file = readdir($dh)) !== false) {
-                    if(filetype($GLOBALS['DATA_DIR'].$basePath . '/' . $file) == 'dir' && 
+                    if(filetype($GLOBALS['DATA_DIR'].$basePath . '/' . $file) == 'dir' &&
                         DateTime::createFromFormat('Y\Ym\Md\DH\H',$file) >= DateTime::createFromFormat('Y\Ym\Md\DH\H',$start->format('Y\Ym\Md\DH\H')) &&
                         DateTime::createFromFormat('Y\Ym\Md\DH\H',$file) <= DateTime::createFromFormat('Y\Ym\Md\DH\H',$end->format('Y\Ym\Md\DH\H'))){
                         array_push($dirList, $file);
@@ -150,7 +153,7 @@ function getData(){
     $hostsname = explode(" ", getenv('CAMERAS'));
     foreach ($hostsname as $hostname) {
         $timeLine = new TimeLine($hostname.'/');
-        $records = $timeLine->getRange($startDate, 
+        $records = $timeLine->getRange($startDate,
                                        $endDate);
         foreach ($records as $record) {
             array_push($data->rows, array('c' => array(
@@ -163,7 +166,17 @@ function getData(){
     echo json_encode($data);
 };
 
+function path_hash($path, $expires, $secret){
+  $expires = time() + $expires;
+  $md5 = md5("$expires$path $secret", true);
+  $md5 = base64_encode($md5);
+  $md5 = strtr($md5, '+/', '-_');
+  $md5 = str_replace('=', '', $md5);
+  return $path . '?md5=' . $md5 . '&expires=' . $expires;
+}
+
 function getPlaylist(){
+
     $base = $_GET['base'];
     $start = new DateTime();
     $start->setTimestamp( intval($_GET['start']/1000));
@@ -172,19 +185,20 @@ function getPlaylist(){
     $end->setTimestamp(intval($_GET['end']/1000));
     $playlist = Utils::getRecordList($base, $start, $end);
 
-    $protocol = explode("/",$_SERVER['SERVER_PROTOCOL']);
-    $protocol = strtolower(array_shift($protocol));
-
+    $protocol = "http";
+    if(isset($_SERVER['HTTP_X_FORWARDED_SCHEME'])){
+      $protocol = $_SERVER['HTTP_X_FORWARDED_SCHEME'];
+    }
     if ($_GET['type'] == 'm3u'){
         header("content-type: audio/x-mpegurl");
         echo "#EXTM3U \r\n";
         foreach ($playlist as $media) {
-            echo $protocol."://".$_SERVER['HTTP_HOST'] . '/data/' . $base . '/' . $media . "\r\n";
+            echo $protocol."://".$_SERVER['HTTP_HOST'] . path_hash('/data/' . $base . '/' . $media, $GLOBALS['HOTLINK_TTL'], $GLOBALS['HOTLINK_SECRET']) . "\r\n";
         }
     } elseif ($_GET['type'] == 'json') {
         $result = array();
         foreach ($playlist as $media) {
-            $fullUrl = $protocol."://".$_SERVER['HTTP_HOST'] . '/data/'. $base . '/' . $media;
+            $fullUrl = $protocol."://".$_SERVER['HTTP_HOST'] . path_hash('/data/' . $base . '/' . $media, $GLOBALS['HOTLINK_TTL'], $GLOBALS['HOTLINK_SECRET']);
             array_push($result, $fullUrl);
         }
         echo json_encode($result);
@@ -210,11 +224,11 @@ function deletePlaylist(){
 }
 
 $module = "";
-if ($_GET['a'] == 'getData'){
+if (isset($_GET['a']) && $_GET['a'] == 'getData'){
     getData();
-} elseif ($_GET['a'] == 'getPlaylist') {
+} elseif (isset($_GET['a']) && $_GET['a'] == 'getPlaylist') {
     getPlaylist();
-} elseif ($_GET['a'] == 'deletePlaylist') {
+} elseif (isset($_GET['a']) && $_GET['a'] == 'deletePlaylist') {
     deletePlaylist();
 } else {
     $module = "index";
