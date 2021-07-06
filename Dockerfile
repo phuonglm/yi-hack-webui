@@ -37,6 +37,7 @@ WORKDIR /var/www/app
 ADD ./webui/composer.json ./webui/composer.lock ./
 RUN composer install
 ADD ./webui/scripts/package.json ./webui/scripts/yarn.lock ./scripts/
+RUN npm config set unsafe-perm true
 RUN npm install -g yarn && cd /var/www/app/scripts/ && yarn install
 ADD ./webui/scripts/main.js ./webui/scripts/player.js  ./scripts/
 ADD ./webui/index.php ./

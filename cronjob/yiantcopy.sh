@@ -61,7 +61,8 @@ while [[ true ]]; do
         DELETE_RECORD_DIRs=`lftp -c "open '$HOST'; ls /tmp/hd1/record" | grep -v "last_motion_check" | awk '{printf "%s", $9" "}' | awk '{$NF="";sub(/[ \t]+$/,"")}1'`
         # List record directory to delete, exclude 1 last item on record_sub (current record directory)
         DELETE_RECORD_SUB_DIRs=`lftp -c "open '$HOST'; ls /tmp/hd1/record_sub" | awk '{printf "%s", $9" "}' | awk '{$NF="";sub(/[ \t]+$/,"")}1'`
-        lftp -c "open '$HOST';
+        lftp -c "set ftp:use-mdtm no;
+        open '$HOST';
         lcd $LCD/$HOST;
         cd /tmp/hd1/record;
         mirror  \
