@@ -74,7 +74,7 @@ $(document).ready(function(){
 });
 
 function getDateFromMedia(url){
-    return moment(url.substring(44,65),"YYYY[Y]MM[M]DD[D]HH[H]/mm[M]ss[S]");
+    return moment(url.match(/^.*\.mp4/)[0].slice(-25).substring(0,21),"YYYY[Y]MM[M]DD[D]HH[H]/mm[M]ss[S]");
 }
 
 function drawChart() {
@@ -145,11 +145,10 @@ function drawChart() {
             $("#cameraVideo").data("base", base);
 
 
-
-
-
-            $('#myModal').bind('keydown', function(e){
+            $('#myModal').bind('keydown',function(e){
                 var keycode = e.keyCode;
+                var myPlayer = videojs('cameraVideo');
+
                 if (keycode == 39) {
                     var item = myPlayer.playlist.next();
                     if(item){
@@ -165,7 +164,7 @@ function drawChart() {
                 }
             });
 
-            $('#video_container').swipe({
+            $('#video_container video').swipe({
                 swipe:function(event, direction, distance, duration, fingerCount, fingerData) {
                     if (direction === 'left') {
                         var item = myPlayer.playlist.next();
@@ -178,6 +177,7 @@ function drawChart() {
                             $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).format("D/M HH:mm"));
                         }
                     }
+                    return true;
                 },
                 doubleTab: function(event, target){
                     myPlayer.requestFullscreen();
@@ -185,7 +185,7 @@ function drawChart() {
                 }
             });
 
-            $('#video_container').bind('dblclick', function() { myPlayer.requestFullscreen(); });
+            $('#video_container video').bind('dblclick', function() { myPlayer.requestFullscreen(); });
             myPlayer.playlist(playlist, 0);
             myPlayer.playlist.autoadvance(0);
 
@@ -199,4 +199,3 @@ function drawChart() {
 
 
 }
-

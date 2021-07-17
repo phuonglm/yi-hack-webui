@@ -7,6 +7,7 @@ echo -e "Host *\n\tStrictHostKeyChecking no\n" >> /root/.ssh/config
 # Tweak nginx to match the workers to cpu's
 procs=$(cat /proc/cpuinfo |grep processor | wc -l)
 sed -i -e "s/worker_processes 5/worker_processes $procs/" /etc/nginx/nginx.conf
+sed -i -e "s/<HOTLINK_SECRET>/$HOTLINK_SECRET/" /etc/nginx/sites-enabled/default.conf
 
 
 # If an htpasswd file is provided, download and configure nginx
@@ -23,7 +24,7 @@ printenv | grep -v affinity:container | xargs -I{} echo {} | awk 'BEGIN { FS = "
 if [ -f /var/www/app/phing ]; then
   cd /var/www/app
   /var/www/app/phing ${STAGE}
-fi 
+fi
 
 chown -R nginx:nginx /var/www/app
 
