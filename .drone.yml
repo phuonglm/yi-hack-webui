@@ -1,0 +1,81 @@
+kind: pipeline
+type: docker
+name: arm64
+
+platform:
+  os: linux
+  arch: arm64
+
+steps:
+- name: build
+  image: plugins/docker
+  settings:
+    repo: docker.repo.phuonglm.net/phuonglm/yi-hack-webui
+    registry: docker.repo.phuonglm.net
+    dockerfile: Dockerfile
+    auto_tag: true
+    auto_tag_suffix: linux-arm64
+    username:
+      from_secret: docker_repo_username
+    password:
+      from_secret: docker_repo_password
+trigger:
+  event:
+    include:
+    - push
+    - tag
+---
+kind: pipeline
+type: docker
+name: amd64
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: build
+  image: plugins/docker
+  settings:
+    repo: docker.repo.phuonglm.net/phuonglm/yi-hack-webui
+    registry: docker.repo.phuonglm.net
+    dockerfile: Dockerfile
+    auto_tag: true
+    auto_tag_suffix: linux-amd64
+    username:
+      from_secret: docker_repo_username
+    password:
+      from_secret: docker_repo_password
+trigger:
+  event:
+    include:
+    - push
+    - tag 
+
+---
+kind: pipeline
+type: docker
+name: manifest
+
+steps:
+- name: manifest
+  image: plugins/manifest
+  settings:
+    auto_tag: "true"
+    ignore_missing: "true"
+    spec: .ci/drone/docker/manifest.tmpl
+    target: docker.repo.phuonglm.net/phuonglm/yi-hack-webui:latest
+    username:
+      from_secret: docker_repo_username
+    password:
+      from_secret: docker_repo_password
+    platforms:
+      - linux/amd64
+      - linux/arm64
+trigger:
+  event:
+  - push
+  - tag
+depends_on:
+- amd64
+- arm64
