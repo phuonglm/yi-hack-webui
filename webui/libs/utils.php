@@ -1,8 +1,12 @@
 <?php
 $GLOBALS['DATA_DIR'] = getenv("DATA_PATH") ? getenv("DATA_PATH") : "data/";
-date_default_timezone_set(getenv("TIME_ZONE") ? getenv("TIME_ZONE") : "UTC");
+#date_default_timezone_set(getenv("TIME_ZONE") ? getenv("TIME_ZONE") : "UTC");
+date_default_timezone_set("UTC");
 $GLOBALS['HOTLINK_SECRET'] = getenv("HOTLINK_SECRET") ? getenv("HOTLINK_SECRET") : "hellosecret";
 $GLOBALS['HOTLINK_TTL'] = getenv("HOTLINK_TTL") ? getenv("HOTLINK_TTL") : 3600;
+
+$tzOffset= new DateTime('now', new DateTimeZone(getenv("TIME_ZONE") ? getenv("TIME_ZONE") : "UTC"));
+$TIME_OFFSET = $tzOffset->format('Z')*1000;
 
 class Segment {
     public $start;

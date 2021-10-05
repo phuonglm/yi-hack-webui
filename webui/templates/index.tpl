@@ -69,5 +69,8 @@
         <div id="chart_div" style="padding: 0.7em"></div>
         {include file="player.tpl"}
         <script src="scripts/main.js"></script>
+        <script type="text/javascript">
+            window.time_offset = {$time_offset};
+        </script>
   </body>
 </html>

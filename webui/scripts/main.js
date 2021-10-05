@@ -24,14 +24,14 @@ $(document).ready(function(){
       var myPlayer = videojs('cameraVideo');
       var item = myPlayer.playlist.previous()
       if(item){
-        $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).format("D/M HH:mm"));
+        $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).add(window.time_offset/1000/60, "minutes").format("D/M HH:mm"));
       }
     });
     $(".next-btn").click(function(){
       var myPlayer = videojs('cameraVideo');
       var item = myPlayer.playlist.next()
       if(item){
-        $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).format("D/M HH:mm"));
+        $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).add(window.time_offset/1000/60, "minutes").format("D/M HH:mm"));
       }
     });
 
@@ -135,7 +135,7 @@ function drawChart() {
             $.each( data, function( key, val ) {
                 item = {'sources': [ {'src': val, 'type': 'video/mp4'} ]};
                 playlist.push(item);
-                if(getDateFromMedia(val).isBefore(clickedStart)){
+                if(getDateFromMedia(val).add(window.time_offset/1000/60, "minutes").isBefore(clickedStart)){
                     i++;
                 }
             });
@@ -152,12 +152,12 @@ function drawChart() {
                 if (keycode == 39) {
                     var item = myPlayer.playlist.next();
                     if(item){
-                        $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).format("D/M HH:mm"));
+                        $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).add(window.time_offset/1000/60, "minutes").format("D/M HH:mm"));
                     }
                 } else if (keycode == 37) {
                     var item = myPlayer.playlist.previous();
                     if(item){
-                        $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).format("D/M HH:mm"));
+                        $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).add(window.time_offset/1000/60, "minutes").format("D/M HH:mm"));
                     }
                 } else if (keycode == 46) {
                     $("#delete-btn").trigger('click');
@@ -169,12 +169,12 @@ function drawChart() {
                     if (direction === 'left') {
                         var item = myPlayer.playlist.next();
                         if(item){
-                            $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).format("D/M HH:mm"));
+                            $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).add(window.time_offset/1000/60, "minutes").format("D/M HH:mm"));
                         }
                     } else if (direction === 'right') {
                         var item = myPlayer.playlist.previous();
                         if(item){
-                            $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).format("D/M HH:mm"));
+                            $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).add(window.time_offset/1000/60, "minutes").format("D/M HH:mm"));
                         }
                     }
                     return true;

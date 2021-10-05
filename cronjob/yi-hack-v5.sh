@@ -49,7 +49,6 @@ else
     lcd $LCD/$HOST;
     cd /tmp/sd/record;
     mirror  \
-           --Remove-source-files \
            --exclude-glob *.tmp \
            --exclude-glob last_motion_check \
            --verbose;

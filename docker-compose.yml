@@ -7,11 +7,13 @@ services:
     image: phuonglm/yi-hack-webui
     volumes:
       - /mnt/exthdd/cctv/data:/var/www/app/data
-      - ./cronjob/yiantcopy.sh:/opt/yidownload/yiantcopy.sh
-      - ./cronjob/yi-hack-v5.sh:/opt/yidownload/yi-hack-v5.sh
+      # Dev mode
+      # - ./cronjob/yiantcopy.sh:/opt/yidownload/yiantcopy.sh
+      # - ./cronjob/yi-hack-v5.sh:/opt/yidownload/yi-hack-v5.sh
       # - ./webui/templates:/var/www/app/templates
       # - ./webui/scripts:/var/www/app/scripts
       # - ./webui/libs:/var/www/app/libs
+      # - ./webui/index.php:/var/www/app/index.php
     ports:
       - "0.0.0.0:5001:80"
     restart: always
