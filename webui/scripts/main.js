@@ -59,7 +59,7 @@ $(document).ready(function(){
         if ($("#video_container video").length > 0){
             var myPlayer = videojs('cameraVideo');
             var source = myPlayer.currentSource();
-            window.markStart = getDateFromMedia(videojs('cameraVideo').currentSource().src);
+            window.markStart = getDateFromMedia(videojs('cameraVideo').currentSource().src).add(window.time_offset / 1000 / 60, "minutes");
         }
     });
 
@@ -67,7 +67,7 @@ $(document).ready(function(){
         if ($("#video_container video").length > 0){
             var myPlayer = videojs('cameraVideo');
             var source = myPlayer.currentSource();
-            window.markEnd = getDateFromMedia(videojs('cameraVideo').currentSource().src);
+            window.markEnd = getDateFromMedia(videojs('cameraVideo').currentSource().src).add(window.time_offset / 1000 / 60, "minutes");
         }
     });
 

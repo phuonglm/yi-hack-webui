@@ -20,4 +20,3 @@ services:
     mem_limit: 50M
     env_file:
       .env
-    restart: always
