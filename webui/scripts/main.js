@@ -20,14 +20,14 @@ $(document).ready(function(){
         myPlayer.dispose();
     });
 
-    $(".previous-btn").click(function(){
+    $(".previous-btn").on('click', function(){
       var myPlayer = videojs('cameraVideo');
       var item = myPlayer.playlist.previous()
       if(item){
         $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).add(window.time_offset/1000/60, "minutes").format("D/M HH:mm"));
       }
     });
-    $(".next-btn").click(function(){
+    $(".next-btn").on('click', function(){
       var myPlayer = videojs('cameraVideo');
       var item = myPlayer.playlist.next()
       if(item){
@@ -35,7 +35,7 @@ $(document).ready(function(){
       }
     });
 
-    $("#delete-btn").click(function(){
+    $("#delete-btn").on('click', function(){
       var start = $("#cameraVideo").data("start");
       var end = $("#cameraVideo").data("end");
       var base = $("#cameraVideo").data("base");
@@ -55,19 +55,19 @@ $(document).ready(function(){
           drawChart();
       });
     });
-    $(".mark-start-btn").click(function(){
+    $(".mark-start-btn").on('click', function(){
         if ($("#video_container video").length > 0){
             var myPlayer = videojs('cameraVideo');
             var source = myPlayer.currentSource();
-            window.markStart = getDateFromMedia(videojs('cameraVideo').currentSource().src).add(window.time_offset / 1000 / 60, "minutes");
+            window.markStart = getDateFromMedia(source.src).add(window.time_offset / 1000 / 60, "minutes");
         }
     });
 
-    $(".mark-end-btn").click(function(){
+    $(".mark-end-btn").on('click', function(){
         if ($("#video_container video").length > 0){
             var myPlayer = videojs('cameraVideo');
             var source = myPlayer.currentSource();
-            window.markEnd = getDateFromMedia(videojs('cameraVideo').currentSource().src).add(window.time_offset / 1000 / 60, "minutes");
+            window.markEnd = getDateFromMedia(source.src).add(window.time_offset / 1000 / 60, "minutes");
         }
     });
 
@@ -129,6 +129,9 @@ function drawChart() {
             video.appendTo($('#video_container'));
 
             var myPlayer = videojs('cameraVideo');
+            myPlayer.on('play', function () {
+                $('#pushModalLabel').html(getDateFromMedia(myPlayer.currentSource().src).add(window.time_offset/1000/60, "minutes").format("D/M HH:mm"));
+            });
             var playlist = [];
             var i = 0;
 
@@ -150,15 +153,10 @@ function drawChart() {
                 var myPlayer = videojs('cameraVideo');
 
                 if (keycode == 39) {
-                    var item = myPlayer.playlist.next();
-                    if(item){
-                        $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).add(window.time_offset/1000/60, "minutes").format("D/M HH:mm"));
-                    }
+                    myPlayer.playlist.next();
+
                 } else if (keycode == 37) {
-                    var item = myPlayer.playlist.previous();
-                    if(item){
-                        $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).add(window.time_offset/1000/60, "minutes").format("D/M HH:mm"));
-                    }
+                    myPlayer.playlist.previous();
                 } else if (keycode == 46) {
                     $("#delete-btn").trigger('click');
                 }
@@ -167,15 +165,9 @@ function drawChart() {
             $('#video_container video').swipe({
                 swipe:function(event, direction, distance, duration, fingerCount, fingerData) {
                     if (direction === 'left') {
-                        var item = myPlayer.playlist.next();
-                        if(item){
-                            $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).add(window.time_offset/1000/60, "minutes").format("D/M HH:mm"));
-                        }
+                        myPlayer.playlist.next();
                     } else if (direction === 'right') {
-                        var item = myPlayer.playlist.previous();
-                        if(item){
-                            $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).add(window.time_offset/1000/60, "minutes").format("D/M HH:mm"));
-                        }
+                        myPlayer.playlist.previous();
                     }
                     return true;
                 },
