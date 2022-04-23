@@ -22,17 +22,11 @@ $(document).ready(function(){
 
     $(".previous-btn").on('click', function(){
       var myPlayer = videojs('cameraVideo');
-      var item = myPlayer.playlist.previous()
-      if(item){
-        $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).add(window.time_offset/1000/60, "minutes").format("D/M HH:mm"));
-      }
+      myPlayer.playlist.previous()
     });
     $(".next-btn").on('click', function(){
       var myPlayer = videojs('cameraVideo');
-      var item = myPlayer.playlist.next()
-      if(item){
-        $('#pushModalLabel').html(getDateFromMedia(videojs('cameraVideo').currentSource().src).add(window.time_offset/1000/60, "minutes").format("D/M HH:mm"));
-      }
+      myPlayer.playlist.next()
     });
 
     $("#delete-btn").on('click', function(){
@@ -151,14 +145,20 @@ function drawChart() {
             $('#myModal').bind('keydown',function(e){
                 var keycode = e.keyCode;
                 var myPlayer = videojs('cameraVideo');
-
                 if (keycode == 39) {
                     myPlayer.playlist.next();
-
                 } else if (keycode == 37) {
                     myPlayer.playlist.previous();
                 } else if (keycode == 46) {
                     $("#delete-btn").trigger('click');
+                }
+            });
+
+            $("#pushModalLabel").swipe({
+                'hold': function(event, target) {
+                    if (navigator && navigator.clipboard && navigator.clipboard.writeText){
+                        navigator.clipboard.writeText(myPlayer.currentSource().src);
+                    }
                 }
             });
 
