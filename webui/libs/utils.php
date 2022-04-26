@@ -107,8 +107,9 @@ class Utils{
         while(file_exists(
             Utils::createFullPath($basePath,
                             $startTime->modify('-1 minutes'))
-            )){
-
+            ))
+        {
+            // Do nothing
         }
         return $startTime->modify('+1 minutes');
     }
@@ -116,11 +117,21 @@ class Utils{
     public static function findEnd($basePath, $path){
         $inputDate = Utils::createDate($path);
         $endTime = $inputDate;
-        while(file_exists(
-            Utils::createFullPath( $basePath, $endTime->modify('+1 minutes'))
-            )){
+
+        if($endTime->getTimestamp()%60 != 0){
+            $endTime->modify('+'.(60-($endTime->getTimestamp()%60)).' seconds');
+        } else {
+            $endTime->modify('+1 minutes');
         }
-        return $endTime->modify('-1 minutes');
+
+        while(file_exists(
+
+            Utils::createFullPath( $basePath, $endTime)
+            ))
+        {
+            $endTime->modify('+1 minutes');
+        }
+        return $endTime;
     }
 
     public static function getSegment($basePath, $path){
