@@ -1,0 +1,2 @@
+auth required pam_pwdfile.so pwdfile=/etc/vsftpd/virtual_users
+account required pam_permit.so

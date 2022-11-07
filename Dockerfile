@@ -1,5 +1,28 @@
+FROM node:lts-alpine
+WORKDIR /var/www/app
+ADD ./webui/scripts/package.json ./webui/scripts/yarn.lock ./scripts/
+RUN npm config set unsafe-perm true
+RUN cd /var/www/app/scripts/ && yarn install
+ADD ./webui/scripts/main.js ./webui/scripts/player.js  ./scripts/
+
 FROM alpine:3.8
-MAINTAINER phuonglm <phuonglm@phuonglm.net>
+RUN set -ex \
+    && apk add --no-cache ca-certificates curl tzdata shadow build-base linux-pam-dev unzip openssl \
+    && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+    && echo $TZ > /etc/timezone \
+    && rm -rf /tmp/* /var/cache/apk/*
+COPY config/pam.d/libpam-pwdfile.zip /tmp/
+
+RUN set -ex \
+    && unzip -q /tmp/libpam-pwdfile.zip -d /tmp/ \
+    && cd /tmp/libpam-pwdfile \
+    && make install \
+    && rm -rf /tmp/libpam-pwdfile \
+    && rm -f /tmp/libpam-pwdfile.zip
+
+FROM alpine:3.8
+LABEL org.opencontainers.image.authors="phuonglm <phuonglm@phuonglm.net>"
+LABEL description="Docker yi-hack webui"
 
 RUN apk --update add wget \ 
     nginx \
@@ -23,7 +46,7 @@ RUN apk --update add wget \
     php5-phar \
     php5-dom \
     php5-cli \
-    busybox-extras lftp nodejs npm && \
+    busybox-extras lftp vsftpd openssl && \
     rm /var/cache/apk/*            && \
     ln -s /usr/bin/php5 /usr/bin/php && \
     curl -sS https://getcomposer.org/installer | php5 -- --install-dir=/usr/bin --filename=composer && \
@@ -34,16 +57,14 @@ RUN apk --update add wget \
     rm /etc/nginx/nginx.conf
 
 WORKDIR /var/www/app
+COPY --from=0 /var/www/app ./
+COPY --from=1 /lib/security/pam_pwdfile.so /lib/security/pam_pwdfile.so
+
 ADD ./webui/composer.json ./webui/composer.lock ./
 RUN composer install
-ADD ./webui/scripts/package.json ./webui/scripts/yarn.lock ./scripts/
-RUN npm config set unsafe-perm true
-RUN npm install -g yarn && cd /var/www/app/scripts/ && yarn install
-ADD ./webui/scripts/main.js ./webui/scripts/player.js  ./scripts/
 ADD ./webui/index.php ./
 ADD ./webui/libs ./libs
 ADD ./webui/templates ./templates
-
 
 RUN mkdir -p /opt/yidownload/
 WORKDIR /opt/yidownload/
@@ -55,6 +76,8 @@ RUN mkdir -p /var/www/app/data
 
 ADD ./config/nginx/nginx.conf /etc/nginx/nginx.conf
 ADD ./config/supervisord/supervisord.conf /etc/supervisord.conf
+ADD ./config/vsftpd/vsftpd.conf /etc/vsftpd/vsftpd.conf
+ADD ./config/pam.d/vsftpd_virtual /etc/pam.d/vsftpd_virtual
 
 # tweak php-fpm config
 RUN sed -i -e "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g" /etc/php5/php.ini                                           && \
@@ -83,11 +106,16 @@ ADD ./config/nginx/site-default.conf /etc/nginx/sites-enabled/default.conf
 
 RUN mkdir -p /var/www/app/tmp/ && chmod 777 /var/www/app/tmp/
 
+# make pam_pwdfile.so
+RUN set -ex \
+    && mkdir -p /var/log/vsftpd/ \
+    && mkdir -p /etc/vsftpd/vsftpd_user_conf/ \
+    && mkdir -p /var/mail/ 
 
 VOLUME /var/www/app/data
 
 # Expose Ports
-EXPOSE 443 80
+EXPOSE 443 80 21 5005-5010
 
 # RUN chown -R www-data:www-data /var/www/
 CMD ["/bin/bash", "/opt/yidownload/start.sh"]

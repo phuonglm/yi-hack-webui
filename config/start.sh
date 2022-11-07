@@ -33,5 +33,8 @@ if [ -f /usr/local/bin/nginx_env.sh ]; then
   /usr/local/bin/nginx_env.sh
 fi
 
+echo "$TELNET_USER:$(openssl passwd -1 $TELNET_PASSWORD)" > /etc/vsftpd/virtual_users
+
+
 # Start supervisord and services
 /usr/bin/supervisord -n -c /etc/supervisord.conf

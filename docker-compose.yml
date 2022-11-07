@@ -16,7 +16,9 @@ services:
       # - ./webui/index.php:/var/www/app/index.php
     ports:
       - "0.0.0.0:5001:80"
+      - "0.0.0.0:5005-5010:5005-5010"
+      - "0.0.0.0:21:21"
     restart: always
-    mem_limit: 50M
+    mem_limit: 70M
     env_file:
       .env

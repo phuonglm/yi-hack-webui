@@ -17,10 +17,12 @@ else
         exit;
     fi
 
-    nc -z -w 5 $HOST 21
-    if [ $? -eq 1 ]; then
-        echo "FTP service on $HOST seem down, please check your camera again."
-        exit;
+    if [ "$FTP_SERVER" != "true" ]; then
+        nc -z -w 5 $HOST 21
+        if [ $? -eq 1 ]; then
+            echo "FTP service on $HOST seem down, please check your camera again."
+            exit;
+        fi
     fi
 
 
@@ -36,48 +38,51 @@ else
     sleep 10
     ) | telnet $HOST > /dev/null 2>&1
 
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Downloading all records from $HOST.";
+    if [ "$FTP_SERVER" != "true" ]; then
 
-    if [ ! -d "$LCD/$HOST" ]; then
-      mkdir "$LCD/$HOST"
-    fi
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Downloading all records from $HOST.";
 
-    # List record directory to delete, exclude 1 last item on record (current record directory)
-    DELETE_RECORD_DIRs=`lftp -c "open '$HOST' -u $TELNET_USER:$TELNET_PASSWORD; ls /tmp/sd/record" | grep -v "last_motion_check" | awk '{printf "%s", $9" "}' | awk '{$NF="";sub(/[ \t]+$/,"")}1'`
-    lftp -c "set ftp:use-mdtm no;
-    open '$HOST' -u $TELNET_USER:$TELNET_PASSWORD;
-    lcd $LCD/$HOST;
-    cd /tmp/sd/record;
-    mirror  \
-           --exclude-glob *.tmp \
-           --exclude-glob last_motion_check \
-           --verbose;
-    "
-    #> /dev/null 2>&1
+        if [ ! -d "$LCD/$HOST" ]; then
+        mkdir "$LCD/$HOST"
+        fi
 
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Cleaning up $HOST.";
+        # List record directory to delete, exclude 1 last item on record (current record directory)
+        DELETE_RECORD_DIRs=`lftp -c "open '$HOST' -u $TELNET_USER:$TELNET_PASSWORD; ls /tmp/sd/record" | grep -v "last_motion_check" | awk '{printf "%s", $9" "}' | awk '{$NF="";sub(/[ \t]+$/,"")}1'`
+        lftp -c "set ftp:use-mdtm no;
+        open '$HOST' -u $TELNET_USER:$TELNET_PASSWORD;
+        lcd $LCD/$HOST;
+        cd /tmp/sd/record;
+        mirror  \
+            --exclude-glob *.tmp \
+            --exclude-glob last_motion_check \
+            --verbose;
+        "
+        #> /dev/null 2>&1
 
-    nc -z -w 5 $HOST 23
-    if [ $? -eq 1 ]; then
-        echo "Telnet service on $HOST seem down, please check your camera again."
-        exit;
-    fi
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Cleaning up $HOST.";
 
-    nc -z -w 5 $HOST 23
-    if [ $? -eq 1 ]; then
-        echo "Telnet service on $HOST seem down, please check your camera again."
-        exit;
-    fi
+        nc -z -w 5 $HOST 23
+        if [ $? -eq 1 ]; then
+            echo "Telnet service on $HOST seem down, please check your camera again."
+            exit;
+        fi
 
-    if [[ $DELETE_RECORD_DIRs = *[!\ ]* ]]; then
-        (sleep 1
-        echo ${TELNET_USER}
-        sleep 1
-        echo ${TELNET_PASSWORD}
-        sleep 1
-        echo "cd /tmp/sd/record && rm -rf $DELETE_RECORD_DIRs"
-        sleep 4
-        ) | telnet $HOST > /dev/null 2>&1
+        nc -z -w 5 $HOST 23
+        if [ $? -eq 1 ]; then
+            echo "Telnet service on $HOST seem down, please check your camera again."
+            exit;
+        fi
+
+        if [[ $DELETE_RECORD_DIRs = *[!\ ]* ]]; then
+            (sleep 1
+            echo ${TELNET_USER}
+            sleep 1
+            echo ${TELNET_PASSWORD}
+            sleep 1
+            echo "cd /tmp/sd/record && rm -rf $DELETE_RECORD_DIRs"
+            sleep 4
+            ) | telnet $HOST > /dev/null 2>&1
+        fi
     fi
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] done"
 fi
