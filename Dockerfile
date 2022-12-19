@@ -68,7 +68,7 @@ ADD ./webui/templates ./templates
 
 RUN mkdir -p /opt/yidownload/
 WORKDIR /opt/yidownload/
-ADD ./cronjob/yiantcopy.sh ./
+ADD ./cronjob/* ./
 ADD ./config/start.sh ./
 RUN chmod 755 /opt/yidownload/*.sh && chmod u+s /bin/ping
 
