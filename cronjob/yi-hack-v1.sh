@@ -4,7 +4,7 @@ function camera_data_download {
         echo "[$(date '+%Y-%m-%d %H:%M:%S')] Downloading all records from $HOST.";
 
         if [ ! -d "$LCD/$HOST" ]; then
-        mkdir "$LCD/$HOST"
+            mkdir "$LCD/$HOST"
         fi
 
         # List record directory to delete, exclude 1 last item on record (current record directory)

@@ -48,7 +48,7 @@ function camera_data_download(){
 }
 LCD="${DATA_PATH:-/data}"
 if [ -z "$1" ]; then
-    echo "no host input, please use yi-hack-v5.sh <hostname/ip>"
+    echo "no host input, please use yi-hack-mstar.sh <hostname/ip>"
     exit
 else
     HOST=$1
@@ -95,6 +95,11 @@ else
         camera_data_download &
         echo "$!" > "/tmp/camera_download_$HOST.pid"
     fi
+
+    cd "$LCD/$HOST"
+    for i in ./*/*S[0-9][0-9].mp4 ; do 
+        mv "$i" "${i/[0-9][0-9].mp4/.mp4}"; 
+    done
 
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] done"
 fi
